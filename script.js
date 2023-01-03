@@ -6,24 +6,30 @@ const rad = window.document.getElementsByName('preferences')
 
 
 // Se o rad for alterado, a div de resultados e o input são limpos
-rad[0].onchange = () => resDiv.innerHTML = [
-    '<strong>(esperando gerar)</strong>', input.value = ''
+rad[0].onchange = () => [
+    input.value = '',
+    input.focus(),
+    resDiv.innerHTML = '<strong>(esperando gerar)</strong>', 
+    input.placeholder = 'Num. decimal',
+    input.title = 'Digite aqui o número decimal que você quer converter em binário'
 ]
 
-rad[1].onchange = () => resDiv.innerHTML = [
-    '<strong>(esperando gerar)</strong>', input.value = ''
+rad[1].onchange = () => [
+    input.value = '',
+    input.focus(),
+    resDiv.innerHTML = '<strong>(esperando gerar)</strong>', 
+    input.placeholder = 'Num. binário',
+    input.title = 'Digite aqui o número binário que você quer converter em decimal'
 ]
 
 
 // Funções
 function numToBin (num = '') {
 
-    // Verificando o parâmetro (esse !== 0 é pq tava dando erro se botasse 0)
-    if(typeof num !== 'number' && num !== 0) {
-        return 'Err: O valor precisa ser um número!'
+    // Verificando
+    if (perseInt(num) !== num) {
+        return `err: Digite um valor inteiro! Fornecido: ${num}, sugestão: ${parseInt(num)}`
     }
-
-    // === //
     
     // Valores
     let res = ''
@@ -34,10 +40,8 @@ function numToBin (num = '') {
     // Só falta resolver o problema das vezes que o laço é executado (a partir de 12)
    for(let i = 0; i <= num; i++) {
 
-
-    // Pegando a última caractere
+        // Pegando o último caractere
         lastChar = res.charAt(res.length - 1)
-
 
         // Se res estiver vazio ele vira 0
         if(!res) {
@@ -46,11 +50,9 @@ function numToBin (num = '') {
 
          // Se o último char for 0
         } else if(lastChar == '0') {
-            //console.log(`'${res} termina com 0'`)
-
 
             for(let z = res.length - 1; z >= 0; z--) {
-    
+
 
                 if(res.charAt(z) == '0') {
 
@@ -66,12 +68,10 @@ function numToBin (num = '') {
 
          // Se for 1    
         } else if(lastChar == '1') {
-            //console.log(`'${res} termina com 1'`)
-
 
             // Laço que vai caçar um número 0 pra virar 1, se n tiver, zera tudo e add 1 na frente
             for(let z = res.length - 1; z >= 0; z--) {
-    
+
 
                 // Procurando um 0
                 if(res.charAt(z) == '0') {
@@ -83,7 +83,6 @@ function numToBin (num = '') {
                     // Zerando os num que tem dps do 1
                     for(let x = z + 1; x < res.length; x++) {
                         res[x] = '0'
-                        //console.log([res, x, res.length])
                     }
 
                     // Juntando tudo numa string
@@ -123,8 +122,12 @@ function binToNum (num = '') {
     for(let i = 2; i <= 9; i++) {
 
         if(num.includes(i)) {
-            return 'Err: O valor não pode conter números diferentes de 0 ou 1!'
+            return 'err: O valor não pode conter números diferentes de 0 ou 1!'
+
+        } else if (perseInt(num) !== num) {
+            return `err: Um número binário não pode ser decimal! Fornecido: ${num}, sugestão: ${parseInt(num)}`
         }
+
     }
 
     // === //
@@ -182,32 +185,28 @@ function bin() {
     // Valor
     const value = input.value
 
-
     // Verificações
     if(value.length === 0) {
-        return window.alert('Digite o valor!')
-
-    } else if(!Number(value)) {
-        return window.alert('O valor só pode conter números')
+        return window.alert('err: Digite o valor!')
     }
-    
+
 
     // dec => bin
     if(rad[0].checked) {
 
         // Valor
         let x = String(numToBin( Number(value) ))
-        //console.log(x)
 
         // Verificando
-        if(x.startsWith('Err:')) {
+        if(x.startsWith('err:')) {
             return window.alert(x)
-
+            
         } else {
-
+            
             // Colocando o resultado na div
             resDiv.innerHTML = `bin de ${value} = ${x}`
         }
+
 
      // bin => dec
     } else if(rad[1].checked) {
@@ -216,16 +215,24 @@ function bin() {
         let x = String(binToNum( Number(value) ))
 
         // Verificando
-        if(x.startsWith('Err:')) {
+        if(x.startsWith('err:')) {
             return window.alert(x)
 
         } else {
-
+            
+            // Colocando o resultado na div
             resDiv.innerHTML = `dec de ${value} = ${x}`
         }
     }
 
     // === //
+
+    createReverseButton()
+}
+
+
+// Criar o botão reverse
+function createReverseButton (){
 
     // Criando um botão
     let but = window.document.createElement('input')
@@ -238,25 +245,36 @@ function bin() {
     resDiv.appendChild(but)
 }
 
-
 function reverse() {
 
     // Valor
     const value = input.value
     
-    
     // dec => bin
     if(rad[0].checked) {
+        let x = numToBin( Number(value) )
 
         rad[1].checked = true
-        input.value = numToBin( Number(value) )
-        bin()
+        input.value = x
+        resDiv.innerHTML = `dec de ${x} = ${value}`
 
      // bin => dec
     } else if(rad[1].checked) {
+        let x = binToNum( Number(value) )
 
         rad[0].checked = true
-        input.value = binToNum( Number(value) )
-        bin()
+        input.value = x
+        resDiv.innerHTML = `bin de ${x} = ${value}`
     }
+
+    createInverseButton()
+}
+
+
+// Função que limpa
+function clean (){
+
+    resDiv.innerHTML = 'Limpo! 🗑️'
+    input.value = ''
+    input.focus()
 }
