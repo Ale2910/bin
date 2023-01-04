@@ -27,7 +27,7 @@ rad[1].onchange = () => [
 function numToBin (num = '') {
 
     // Verificando
-    if (perseInt(num) !== num) {
+    if (parseInt(num) !== num) {
         return `err: Digite um valor inteiro! Fornecido: ${num}, sugestão: ${parseInt(num)}`
     }
     
@@ -267,7 +267,7 @@ function reverse() {
         resDiv.innerHTML = `bin de ${x} = ${value}`
     }
 
-    createInverseButton()
+    createReverseButton()
 }
 
 
