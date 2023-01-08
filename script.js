@@ -24,7 +24,11 @@ rad[1].onchange = () => [
 
 
 // Funções
-function numToBin (num = '') {
+function numToBin () {
+
+    // Declarando um valor
+    const num = Number(input.value)
+
 
     // Verificando
     if (parseInt(num) !== num) {
@@ -109,14 +113,15 @@ function numToBin (num = '') {
         }
    }
 
+
    // Retornando o resultado
     return res
 }
 
-function binToNum (num = '') {
+function binToNum () {
     
-    // Isso vai ser necessário pra frente
-    num = String(num)
+    // Declarando um valor (precisa ser string)
+    let num = input.value
 
     // Se conter algum número que não seja 0 ou 1
     for(let i = 2; i <= 9; i++) {
@@ -124,11 +129,12 @@ function binToNum (num = '') {
         if(num.includes(i)) {
             return 'err: O valor não pode conter números diferentes de 0 ou 1!'
 
-        } else if (perseInt(num) !== num) {
+        } else if ( parseInt( Number(num) ) !== Number(num) ) {
+            
             return `err: Um número binário não pode ser decimal! Fornecido: ${num}, sugestão: ${parseInt(num)}`
         }
-
     }
+
 
     // === //
     
@@ -169,10 +175,26 @@ function binToNum (num = '') {
     }
 
 
-    // Se forem 2 resultados, eles se somam
-    if(res.length === 2) {
-        res = res[0] + res[1]
+    // * Somando todos os valores que restarem
+    let backup = res
+    res = []
+
+    res = backup[0]
+    backup.shift()
+    let howManyTimes = backup.length - 1
+
+   
+    // Transformando o backup em par caso seja ímpar
+    if(backup.length % 2 !== 0) {
+        backup.push(0)
     }
+    
+    // Somando
+    for(let i = 0; i <= howManyTimes; i++){
+        res = res + backup[0]
+        backup.shift()
+    }
+
 
     // Retornando o resultado
     return res
@@ -183,46 +205,58 @@ function binToNum (num = '') {
 function bin() {
 
     // Valor
-    const value = input.value
+    let value = input.value
 
     // Verificações
     if(value.length === 0) {
         return window.alert('err: Digite o valor!')
     }
 
+    // bin = 11110100001001000000
+    // dec = 100000000
+
+    //
+    value = Number(value)
+
 
     // dec => bin
     if(rad[0].checked) {
 
-        // Valor
-        let x = String(numToBin( Number(value) ))
-
         // Verificando
+        if(value >= 100000000) {
+            return window.alert('err: Esse valor é grande demais, tente algo menor!')
+        }
+
+        // Valor
+        let x = String(numToBin( value ))
+
+        // Apenas verificando se deu erro e retornando caso sim
         if(x.startsWith('err:')) {
             return window.alert(x)
-            
-        } else {
-            
-            // Colocando o resultado na div
-            resDiv.innerHTML = `bin de ${value} = ${x}`
         }
+
+        // Colocando o resultado na div
+        resDiv.innerHTML = `bin de ${value} = ${x}`
 
 
      // bin => dec
     } else if(rad[1].checked) {
-        
-        // Valor
-        let x = String(binToNum( Number(value) ))
 
         // Verificando
+        if(value >= 11110100001001000000) {
+            return window.alert('err: Esse valor é grande demais, tente algo menor!')
+        }
+
+        // Valor
+        let x = String(binToNum( value ))
+
+        // Apenas verificando se deu erro e retornando caso sim
         if(x.startsWith('err:')) {
             return window.alert(x)
-
-        } else {
-            
-            // Colocando o resultado na div
-            resDiv.innerHTML = `dec de ${value} = ${x}`
         }
+            
+        // Colocando o resultado na div
+        resDiv.innerHTML = `dec de ${value} = ${x}`
     }
 
     // === //
@@ -248,11 +282,11 @@ function createReverseButton (){
 function reverse() {
 
     // Valor
-    const value = input.value
+    const value = Number(input.value)
     
     // dec => bin
     if(rad[0].checked) {
-        let x = numToBin( Number(value) )
+        let x = numToBin()
 
         rad[1].checked = true
         input.value = x
@@ -260,7 +294,7 @@ function reverse() {
 
      // bin => dec
     } else if(rad[1].checked) {
-        let x = binToNum( Number(value) )
+        let x = binToNum()
 
         rad[0].checked = true
         input.value = x
